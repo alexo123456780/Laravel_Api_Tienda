@@ -259,6 +259,47 @@ class UsuarioController extends Controller
 
     }
 
+    public function verinfoUsuario($id_usuario){
+
+        try{
+
+            $usuario = Usuario::find($id_usuario);
+
+            if(!$usuario){
+
+                return response()->json([
+
+                    'status' => false,
+                    'message' => 'El usuario no existe o no se ha registrado aun',
+                    'code' => 404
+                ],404);
+            }
+
+            $usuario->perfil_usuario = asset('storage/'.$usuario->perfil_usuario);
+
+            return response()->json([
+
+                'status' => true,
+                'message' => 'Informacion del usuario obtenida correctamente',
+                'data' => $usuario,
+                'code' => 200
+            ],200);
+
+
+        }catch(\Exception $e){
+
+            return response()->json([
+
+                'status' => false,
+                'message' => 'Error de codificacion',
+                'warning' => $e->getMessage(),
+                'code' => 500
+            ],500);
+
+        }
+
+    }
+
 
 
 

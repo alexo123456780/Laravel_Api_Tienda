@@ -27,7 +27,7 @@ Route::post('login-usuario',[LoginUsuarioController::class,'loginUsuario']);
 Route::get('ver_usuarios',[UsuarioController::class,'verUsuarios']);
 Route::put('actualizar_usuario/{id}',[UsuarioController::class,'actualizarInfo']);
 Route::put('actualizar_password/{id}',[UsuarioController::class,'actualizarPassword']);
-
+Route::get('ver_info_usuario/{id}',[UsuarioController::class,'verinfoUsuario']);
 
 
 //tiendas
