@@ -15,18 +15,25 @@ Route::post('login-admin',[LoginAdminController::class,'loginAdmin']);
 Route::post('alta-tienda',[TiendaController::class,'registrarTienda']);
 Route::post('registro-admin',[AdminController::class,'registroAdmin']);
 Route::get('info_admin/{id}',[AdminController::class,'infoAdmin']);
+Route::put('actualizar_info/{id}',[AdminController::class,'editarPerfil']);
+Route::put('actualizar_password_admin/{id}',[AdminController::class,'actualizarPassword']);
+
 
 
 
 //usuarios
 Route::post('registro-usuario',[UsuarioController::class,'registroUsuario']);
 Route::post('login-usuario',[LoginUsuarioController::class,'loginUsuario']);
+Route::get('ver_usuarios',[UsuarioController::class,'verUsuarios']);
+Route::put('actualizar_usuario/{id}',[UsuarioController::class,'actualizarInfo']);
+Route::put('actualizar_password/{id}',[UsuarioController::class,'actualizarPassword']);
 
 
 
 //tiendas
 Route::get('ver-tiendas',[TiendaController::class,'verTiendas']);
 Route::get('info_tienda/{id}',[TiendaController::class,'infoTienda']);
+
 
 
 
@@ -40,4 +47,8 @@ Route::delete('eliminar_categoria/{id}',[CategoriasController::class,'eliminarCa
 Route::post('crear_producto/{id}',[ProductosController::class,'registrarProducto']);
 Route::get('traer_productos',[ProductosController::class,'verProductos']);
 Route::get('info_producto/{id}',[ProductosController::class,'infoProducto']);
+Route::get('productos_tienda/{id}',[TiendaController::class,'productosTienda']);
+Route::get('ver_ventas/{id}',[ProductosController::class,'numeroVentas']);
+
+
 

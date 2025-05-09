@@ -150,6 +150,70 @@ class TiendaController extends Controller
 
     }
 
+
+
+    //3.funcion para ver los productos que le corresponden a una tienda
+    public function productosTienda($id_tienda){
+
+        try{
+
+            $tienda_busqueda = Tienda::with('productos.categoria')->find($id_tienda);
+
+            if(!$tienda_busqueda){
+
+                return response()->json([
+
+                    'status' => false,
+                    'message' => 'La tienda no ha sido registrada aun',
+                    'code' => 404
+                ],404);
+
+            }
+
+
+
+            $productos_tienda = $tienda_busqueda->productos;
+
+            if($productos_tienda->isEmpty()){
+
+                return response()->json([
+
+                    'status' => true,
+                    'message' => 'Aun no hay productos registrados para esta tienda',
+                    'data' => [],
+                    'code' => 200
+                ],200);
+
+            }
+
+
+            return response()->json([
+
+                'status' => true,
+                'message' => 'Productos de la tienda obtenidos correctamente',
+                'data' => $productos_tienda,
+                'code' => 200
+            ],200);
+
+
+        }catch(\Exception $e){
+
+            return response()->json([
+
+                'status' => false,
+                'message' => 'Error de codificacion',
+                'warning' => $e->getMessage(),
+                'code' => 500
+            ],500);
+
+        }
+
+    }
+
+
+
+
+
     
 
 

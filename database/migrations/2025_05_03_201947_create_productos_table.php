@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('nombre_producto');
             $table->string('imagen_producto');
             $table->integer('stock');
-            $table->decimal('precio_producto',5,2);
-            $table->string('descripcion_producto');
+            $table->decimal('precio_producto',10,2);
+            $table->text('descripcion_producto');
             $table->integer('numero_ventas')->default(0);
             $table->foreignId('tienda_id')->constrained('tiendas')->onDelete('cascade');
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');

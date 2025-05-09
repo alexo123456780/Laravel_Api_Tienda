@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Administrador;
 use App\Models\Producto;
+use App\Models\Tienda;
 use Illuminate\Http\Request;
 
 class ProductosController extends Controller
@@ -16,10 +17,10 @@ class ProductosController extends Controller
             $datos_validados = $request->validate([
 
                 'nombre_producto' => 'required|string|max:255',
-                'imagen_producto' => 'required|string',
+                'imagen_producto' => 'required|image|mimes:png,jpg,jpeg',
                 'stock' => 'required|numeric',
                 'precio_producto' => 'required|numeric',
-                'descripcion_producto' => 'required|string|max:255',
+                'descripcion_producto' => 'required|string',
                 'categoria_id' => 'required|numeric|exists:categorias,id'
             ]);
 
@@ -99,7 +100,7 @@ class ProductosController extends Controller
 
         try{
 
-            $productos = Producto::all();
+            $productos = Producto::with('categoria')->get();
 
             if($productos->isEmpty()){
 
@@ -111,6 +112,13 @@ class ProductosController extends Controller
                 ],404);
             }
 
+
+            foreach($productos as $productito){
+
+                $productito->imagen_producto = asset('storage/'.$productito->imagen_producto);
+
+            }
+
             return response()->json([
 
                 'status' => true,
@@ -118,6 +126,7 @@ class ProductosController extends Controller
                 'data' => $productos,
                 'code' => 200
             ],200);
+
 
         }catch(\Exception $e){
 
@@ -172,9 +181,60 @@ class ProductosController extends Controller
             ],500);
 
         }
+    }
 
+
+    public function numeroVentas($id_tienda){
+
+        try{
+
+
+            $buscar_tienda = Tienda::with('productos')->find($id_tienda);
+
+            if(!$buscar_tienda){
+
+                return response()->json([
+
+                    'status' => false,
+                    'message' => 'No se encontro informacion de la tienda',
+                    'code' => 404
+                ],404);
+            }
+
+            $productosTienda = $buscar_tienda->productos;
+
+            $ventas_calculadas = $productosTienda->sum('numero_ventas');
+
+
+            return response()->json([
+
+                'status' => true,
+                'message' => 'Ventas calculada correctamente',
+                'numero_ventas' => $ventas_calculadas,
+                'code' => 200
+
+            ],200);
+
+        }catch(\Exception $e){
+
+            return response()->json([
+
+                'status' => false,
+                'message' => 'Error de codificacion',
+                'warning' => $e->getMessage(),
+                'code' => 500
+            ],500);
+
+        }
 
     }
+
+
+
+
+
+
+
 
 
 
