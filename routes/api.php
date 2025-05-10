@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\CategoriasController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -50,5 +51,9 @@ Route::get('info_producto/{id}',[ProductosController::class,'infoProducto']);
 Route::get('productos_tienda/{id}',[TiendaController::class,'productosTienda']);
 Route::get('ver_ventas/{id}',[ProductosController::class,'numeroVentas']);
 
+
+//carrito
+Route::post('agregar_carrito/{id}',[CarritoController::class,'agregarCarrito']);
+Route::get('ver_productos_carro/{id}',[CarritoController::class,'verProductosCarro']);
 
 

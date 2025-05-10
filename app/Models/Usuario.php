@@ -17,5 +17,12 @@ class Usuario extends Authenticatable
     protected $fillable = ['nombre_usuario','apellido_paterno','apellido_materno','numero_telefonico','direccion','perfil_usuario','email','password'];
 
 
+    public function productos(){
+
+        return $this->belongsToMany(Producto::class,'carritos','usuario_id','producto_id');
+
+    }
+
+
     
 }
