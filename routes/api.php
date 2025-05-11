@@ -55,5 +55,7 @@ Route::get('ver_ventas/{id}',[ProductosController::class,'numeroVentas']);
 //carrito
 Route::post('agregar_carrito/{id}',[CarritoController::class,'agregarCarrito']);
 Route::get('ver_productos_carro/{id}',[CarritoController::class,'verProductosCarro']);
+Route::delete('eliminar_carrito/{id}',[CarritoController::class,'eliminarProductoCarro']);
+Route::get('cantidad_total_carro/{id}',[CarritoController::class,'calcularTotalCarrito']);
 
 

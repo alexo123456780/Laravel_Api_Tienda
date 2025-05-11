@@ -158,8 +158,110 @@ class CarritoController extends Controller
 
 
 
+    public function eliminarProductoCarro($id_carro){
+
+        try{
+
+            $carroProducto = Carrito::find($id_carro);
+            
+            
+            if(!$carroProducto){
+
+                return response()->json([
+
+                    'status' => false,
+                    'message' => 'El carrito no existe o no se encuentra actualmente',
+                    'code' => 404
+                ],404);
+
+            }
+
+            $carroProducto->delete();
+
+            return response()->json([
+
+                'status' => true,
+                'message' => 'Producto del carrito eliminado exitosamente',
+                'code' => 200
+            ],200);
 
 
+        }catch(\Exception $e){
+
+            return response()->json([
+
+                'status' => false,
+                'message'=> 'Error de codificacion',
+                'warning' => $e->getMessage(),
+                'code' => 500
+            ],500);
+        }
+
+    }
+
+
+    public function calcularTotalCarrito($id_usuario){
+
+        try{
+
+            $usuarioCarro = Usuario::with('productos')->find($id_usuario);
+
+            if(!$usuarioCarro){
+
+                return response()->json([
+
+                    'status' => false,
+                    'message' => 'El usuario no existe o no se ha registrado aun',
+                    'code' => 404
+                ],404);
+
+            }
+
+            $productosCarro = $usuarioCarro->productos;
+
+            $cantidadTotal = 0;
+
+            foreach($productosCarro as $productito){
+
+
+                if($productito['precio_producto']){
+
+                    $cantidadTotal += $productito['precio_producto'];
+
+                }
+
+            }
+
+             return response()->json([
+                    'status' => true,
+                    'message' => 'Cantidad calculada correctamente',
+                    'precio_total' => $cantidadTotal,
+                    'code' => 200
+                ],200);
+
+
+        }catch(\Exception $e){
+
+            return response()->json([
+
+                'status' => false,
+                'message' => 'Error de codificacion',
+                'warning' => $e->getMessage(),
+                'code' => 500
+            ],500);
+
+        }
+
+    }
+
+
+
+
+
+
+
+
+   
 
 
 

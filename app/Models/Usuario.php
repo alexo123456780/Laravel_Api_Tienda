@@ -19,7 +19,7 @@ class Usuario extends Authenticatable
 
     public function productos(){
 
-        return $this->belongsToMany(Producto::class,'carritos','usuario_id','producto_id');
+        return $this->belongsToMany(Producto::class,'carritos','usuario_id','producto_id')->withPivot('id');
 
     }
 
