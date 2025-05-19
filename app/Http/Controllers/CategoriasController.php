@@ -15,7 +15,7 @@ class CategoriasController extends Controller
             $categoria_validada = $request->validate([
 
                 'nombre' => 'required|string|max:255',
-                'imagen' => 'nullable|string',
+                'imagen' => 'required|image|mimes:png,jpg,jpeg',
                 'descripcion' => 'required|string|max:255'
             ],
 
@@ -26,11 +26,27 @@ class CategoriasController extends Controller
                 'descripcion.string' => 'La descripcion de la categoria debe ser una cadena de texto',
                 'descripcion.max' => 'El maximo de el tamano la descripcion es de 255 caracteres',
                 'nombre.max' => 'El maximo del tamano de el nombre de la categoria debe ser de 255 caracteres',
+                'imagen.image' => 'El formato debe ser una imagen',
+                'imagen.mimes' => 'Formatos disponibles solo png,jpg o jpeg'
 
             ]
         
         
         );
+
+
+        if($request->hasFile('imagen')){
+
+            $imagen_categoria = $request->file('imagen');
+
+            $ruta_imagen = time().'.'.$imagen_categoria->getClientOriginalExtension();
+
+            $imagen_categoria->storeAs('imagenes_categorias',$ruta_imagen,'public');
+
+
+            $categoria_validada['imagen'] = 'imagenes_categorias/'.$ruta_imagen;
+
+        }
 
 
             $categoria_creada = Categoria::create($categoria_validada);

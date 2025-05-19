@@ -32,7 +32,17 @@ class Tienda extends Model
 
     }
 
+    public function ventas(){
 
+        return $this->hasMany(Venta::class);
+
+    }
+
+    public function mensajes(){
+
+        return $this->hasMany(Mensaje::class);
+
+    }
 
 
 

@@ -22,12 +22,19 @@ class Producto extends Model
 
     public function categoria(){
 
-        return $this->belongsTo(Categoria::class,'categoria_id');
+        return $this->belongsTo(CategoriaGlobal::class,'categoria_id');
     }
 
     public function usuarios(){
 
         return $this->belongsToMany(Usuario::class,'carritos','usuario_id','producto_id');
+
+    }
+
+    public function detallesVenta(){
+
+        return $this->hasMany(DetalleVenta::class);
+        
 
     }
 

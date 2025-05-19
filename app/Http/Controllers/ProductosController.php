@@ -21,7 +21,7 @@ class ProductosController extends Controller
                 'stock' => 'required|numeric',
                 'precio_producto' => 'required|numeric',
                 'descripcion_producto' => 'required|string',
-                'categoria_id' => 'required|numeric|exists:categorias,id'
+                'categoria_id' => 'required|numeric|exists:categoria_globals,id'
             ]);
 
             $admin_encontrado = Administrador::find($id_admin);
@@ -149,7 +149,9 @@ class ProductosController extends Controller
 
         try{
 
-            $producto = Producto::find($id_producto);
+
+            //asi se cargan multiples relaciones de la relacion principal de algo
+            $producto = Producto::with(['tienda.administrador', 'tienda.categoria','categoria'])->find($id_producto);
 
             if(!$producto){
 
@@ -159,8 +161,12 @@ class ProductosController extends Controller
                     'message' => 'No se encontro informacion del  producto solicitado',
                     'code' => 404
                 ],404);
-
             }
+
+
+            $producto->imagen_producto = asset('storage/'.$producto->imagen_producto);
+            $producto['tienda']['logo_tienda'] = asset('storage/'.$producto['tienda']['logo_tienda']);
+
 
             return response()->json([
 
@@ -168,6 +174,7 @@ class ProductosController extends Controller
                 'message' => 'Info del producto obtenida correctamente',
                 'data' => $producto,
                 'code' => 200
+
             ],200);
 
         }catch(\Exception $e){
@@ -187,7 +194,6 @@ class ProductosController extends Controller
     public function numeroVentas($id_tienda){
 
         try{
-
 
             $buscar_tienda = Tienda::with('productos')->find($id_tienda);
 
@@ -228,6 +234,201 @@ class ProductosController extends Controller
         }
 
     }
+
+
+    public function actualizarStock(Request $request, $id_producto){
+
+        try{
+
+            $stock_validado = $request->validate([
+
+                'stock' => 'required|numeric',
+            ]);
+
+            $producto_encontrado = Producto::find($id_producto);
+
+            if(!$producto_encontrado){
+
+                return response()->json([
+
+                    'status' => false,
+                    'message' => 'El producto no existe',
+                    'code' => 404
+                ],404);
+            }
+
+            $stockInput = $stock_validado['stock'];
+            $stockProducto = $producto_encontrado->stock;
+
+            if($stockInput <= 0 ){
+
+                return response()->json([
+
+                    'status' => false,
+                    'message' => 'Ingresa una cantidad positiva y mayor a 0',
+                    'code' => 400
+                ],400);
+            }
+
+            $stockActualizado = $stockProducto += $stockInput;
+
+            $producto_encontrado->update([
+
+                'stock' => $stockActualizado
+
+            ]);
+            return response()->json([
+
+                'status' => false,
+                'message' => 'Stock actulizado correctamente',
+                'data' => $producto_encontrado,
+                'code' => 200
+            ],200);
+
+        }catch(\Illuminate\Validation\ValidationException $e){
+
+            return response()->json([
+
+                'status' => false,
+                'message' => 'Error de validacion',
+                'warning' => $e->errors(),
+                'code' => 400
+            ],400);
+
+
+        }catch(\Exception $e){
+
+            return response()->json([
+
+                'status' => false,
+                'message' => 'Error de codificacion',
+                'warning' => $e->getMessage(),
+                'code' => 500
+            ],500);
+
+        }
+    }
+
+
+    //funcion para eliminar un producto
+
+    public function eliminarProducto($id_producto){
+
+        try{
+
+            $producto = Producto::find($id_producto);
+
+            if(!$producto){
+
+                return response()->json([
+
+                    'status' => false,
+                    'message' => 'No se encontro informacion de este producto',
+                    'code' => 404
+                ],404);
+            }
+
+            $producto->delete();
+
+            return response()->json([
+
+                'status' => true,
+                'message' => 'Producto eliminado correctamente',
+                'code' => 200
+
+            ],200);
+
+        }catch(\Exception $e){
+
+            return response()->json([
+
+                'status' => false,
+                'message' => 'Error de codificacion',
+                'warning' => $e->getMessage(),
+                'code' => 500
+            ],500);
+
+        }
+    }
+
+
+    public function editarProducto(Request $request , $id_producto){
+
+        try{
+
+            $datos_validados = $request->validate([
+
+                'nombre_producto' => 'string|max:255',
+                'imagen_producto' => 'image|mimes:png,jpg,jpeg',
+                'precio_producto' => 'numeric',
+                'descripcion_producto' => 'string',
+                'categoria_id' => 'numeric|exists:categoria_globals,id'
+
+            ]);
+
+            $producto = Producto::find($id_producto);
+
+            if(!$producto){
+
+                return response()->json([
+
+                    'status' => false,
+                    'message' => 'No se encontro informacion relacionada a este producto',
+                    'code' => 404
+                ],404);
+                
+            }
+
+            if($request->hasFile('imagen_producto')){
+
+                $imagen_nueva = $request->file('imagen_producto');
+
+                $ruta_nueva = time().'.'.$imagen_nueva->getClientOriginalExtension();
+
+                $imagen_nueva->storeAs('imagenproductoactualizada',$ruta_nueva,'public');
+
+                $datos_validados['imagen_producto'] = 'imagenproductoactualizada/'.$ruta_nueva;
+
+            }
+
+            $producto->update($datos_validados);
+
+            return response()->json([
+
+                'status' => true,
+                'message' => 'Producto actualizado correctamente',
+                'data' => $producto,
+                'code' => 200
+            ],200);
+
+
+        }catch(\Illuminate\Validation\ValidationException $e){
+
+            return response()->json([
+
+                'status' => false,
+                'message' => 'Error de validacion en los campos solicitados',
+                'warning' => $e->errors(),
+                'code' => 400
+            ],400);
+
+        }catch(\Exception $e){
+
+            return response()->json([
+
+                'status' => false,
+                'message' => 'Error de codificacion',
+                'warning' =>  $e->getMessage(),
+                'code' => 500
+            ],500);
+
+        }
+
+
+    }
+
+
+
 
 
 

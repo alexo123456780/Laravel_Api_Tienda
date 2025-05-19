@@ -19,9 +19,24 @@ class Usuario extends Authenticatable
 
     public function productos(){
 
-        return $this->belongsToMany(Producto::class,'carritos','usuario_id','producto_id')->withPivot('id');
+        return $this->belongsToMany(Producto::class,'carritos','usuario_id','producto_id')->withPivot('id')->withPivot('cantidad');
 
     }
+
+    public function ventas(){
+
+        return $this->hasMany(Venta::class);
+
+    }
+
+    public function mensajes(){
+
+        return $this->hasMany(Mensaje::class);
+
+    }
+
+
+
 
 
     
